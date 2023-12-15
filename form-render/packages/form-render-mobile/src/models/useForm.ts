@@ -1,14 +1,10 @@
 import { useRef } from 'react';
 import { Form } from 'antd-mobile';
-import { isMatch, cloneDeep } from 'lodash-es';
 
-import { transformFieldsData, getSchemaFullPath } from 'form-render/es/models/formCoreUtils';
-import { parseBindToValues, parseValuesToBind } from 'form-render/es/models/bindValues';
-import { flattenSchema as flatten } from 'form-render/es/models/flattenSchema';
-import filterValuesUndefined from 'form-render/es/models/filterValuesUndefined';
-import filterValuesHidden from 'form-render/es/models/filterValuesHidden';
-import { _set, _get, _has, _merge, _mergeWith, isFunction, isObject, isArray, _isUndefined, valueRemoveUndefined, hasFuncProperty } from '../utils';
-
+import { transformFieldsData, getSchemaFullPath } from './formCoreUtils';
+import { parseBindToValues, parseValuesToBind } from './bindValues';
+import { _set, _get, _has, _cloneDeep, _merge, _mergeWith, isFunction, isObject, isArray, _isUndefined, valueRemoveUndefined } from '../utils';
+import { flattenSchema as flatten } from './flattenSchema';
 import type { FormInstance } from '../type';
 
 const updateSchemaByPath = (_path: string, _newSchema: any, formSchema: any) => {
@@ -97,7 +93,7 @@ const useForm = () => {
     if (!setState) {
       setTimeout(() => {
         setState({ schema: schemaRef.current, flattenSchema: flattenSchemaRef.current });
-      }, 0);
+      }, 0)
     }
     setState(data);
   };
@@ -119,7 +115,7 @@ const useForm = () => {
       return;
     }
 
-    const schema = cloneDeep(schemaRef.current);
+    const schema = _cloneDeep(schemaRef.current);
     Object.keys(obj || {}).forEach(path => {
       updateSchemaByPath(path, obj[path], schema);
     });
@@ -127,15 +123,10 @@ const useForm = () => {
     handleSchemaUpdate(schema);
   }
 
-  // 设置某个字段的协议
   xform.setSchemaByPath = (_path: string, _newSchema: any) => {
-    // diff 判断是否需要更新，存在函数跳过
-    if (!hasFuncProperty(_newSchema) && isMatch(_newSchema, xform.getSchemaByPath(_path))) {
-      return;
-    }
-
-    const schema = cloneDeep(schemaRef.current);
+    const schema = _cloneDeep(schemaRef.current);
     updateSchemaByPath(_path, _newSchema, schema);
+
     handleSchemaUpdate(schema);
   }
 
@@ -151,20 +142,14 @@ const useForm = () => {
   //   handleSchemaUpdate(schema);
   // }
 
-  // 设置表单数据
   xform.setValues = (_values: any) => {
     const values = parseBindToValues(_values, flattenSchemaRef.current);
     form.setFieldsValue(values);
   }
 
-  // 获取表单数据
   xform.getValues = (nameList?: any, filterFunc?: any) => {
-    let values = cloneDeep(form.getFieldsValue(getFieldName(nameList), filterFunc));
-    const { removeHiddenData } = storeRef.current?.getState() || {};
-    if (removeHiddenData) {
-      values = filterValuesHidden(values, flattenSchemaRef.current);
-    }
-    values = filterValuesUndefined(values);
+    let values = form.getFieldsValue(getFieldName(nameList), filterFunc);
+    values = valueRemoveUndefined(values);
     return parseValuesToBind(values, flattenSchemaRef.current);
   }
 
@@ -173,12 +158,7 @@ const useForm = () => {
     form.setFieldValue(name, value);
   }
 
-  xform.getValueByPath = (path: string) => {
-    const name = getFieldName(path);
-    return form.getFieldValue(name);
-  }
-
-  xform.getSchemaByPath = (_path: string) => {
+  xform.getSchemaByPath = _path => {
     if (typeof _path !== 'string') {
       console.warn('请输入正确的路径');
     }
@@ -289,16 +269,8 @@ const useForm = () => {
     const nameList = (pathList || []).map(path => getFieldName(path));
     if (nameList.length > 0) {
       return validateFields(nameList);
-    }
+    } 
     return validateFields();
-  }
-
-  // 获取扁平化 schema
-  xform.getFlattenSchema = (path?: string) => {
-    if (!path) {
-      return flattenSchemaRef.current;
-    }
-    return flattenSchemaRef.current?.[path];
   }
 
   xform.__initStore = (store: any) => {

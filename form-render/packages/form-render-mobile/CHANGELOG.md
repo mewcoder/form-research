@@ -1,8 +1,5 @@
 # 更新日志
 
-### 1.0.15
-- [!] 修复 removeHidden 配置不生效
-
 ### 1.0.14
 - [+] labelWidget、descWidget 增加 addons 访问属性
 - [-] 兼容 widget 大小写配置

@@ -29,3 +29,6 @@ export const createStore = () => createx<FormStore>((setState: any, get: any) =>
   },
   setIsCardMode: (mode) => setState({ isCardMode: mode }),
 }));
+
+
+

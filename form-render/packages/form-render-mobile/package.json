@@ -1,6 +1,6 @@
 {
   "name": "form-render-mobile",
-  "version": "1.0.15",
+  "version": "1.0.14",
   "description": "通过 JSON Schema 生成标准 Form，常用于自定义搭建配置界面生成",
   "keywords": [
     "Form",
@@ -41,6 +41,7 @@
     "beta": "npm publish --tag beta",
     "build": "father-build",
     "next": "npm publish --tag next",
+    "prepare": "npm run build",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "postpublish": "git push --tags",
     "test:ui": "vitest --ui"
@@ -63,8 +64,7 @@
     "rc-color-picker": "^1.2.6",
     "virtualizedtableforantd4": "^1.1.2",
     "zustand": "^4.1.5",
-    "ahooks": "3.7.5",
-    "form-render": "^2.3.6"
+    "ahooks": "3.7.5"
   },
   "devDependencies": {
     "deep-equal": "^2.0.3",
