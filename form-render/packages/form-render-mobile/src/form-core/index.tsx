@@ -1,12 +1,12 @@
-import React, { useEffect, useContext } from 'react';
-import { Form, Grid } from 'antd-mobile';
-import { useStore } from 'zustand';
-import cx from 'classnames';
+import React, { useEffect, useContext } from "react";
+import { Form, Grid } from "antd-mobile";
+import { useStore } from "zustand";
+import cx from "classnames";
 
-import { valueRemoveUndefined, _cloneDeep, isFunction } from '../utils';
-import { FRContext } from '../models/context';
-import transformProps from '../models/transformProps';
-import { parseValuesToBind } from '../models/bindValues';
+import { valueRemoveUndefined, _cloneDeep, isFunction } from "../utils";
+import { FRContext } from "../models/context";
+import transformProps from "../models/transformProps";
+import { parseValuesToBind } from "../models/bindValues";
 
 import {
   valuesWatch,
@@ -14,11 +14,11 @@ import {
   yymmdd,
   msToTime,
   getSessionItem,
-  setSessionItem
-} from '../models/formCoreUtils';
-import RenderCore from '../render-core';
+  setSessionItem,
+} from "../models/formCoreUtils";
+import RenderCore from "../render-core";
 
-import './index.less';
+import "./index.less";
 
 const FormCore = (props: any) => {
   const store: any = useContext(FRContext);
@@ -28,6 +28,7 @@ const FormCore = (props: any) => {
   const isCardMode = useStore(store, (state: any) => state.isCardMode);
 
   const { type, properties, ...schemaProps } = schema || {};
+
   const {
     formProps,
     displayType,
@@ -67,13 +68,13 @@ const FormCore = (props: any) => {
       displayType,
       labelCol,
       fieldCol,
-      maxWidth
+      maxWidth,
     };
     setContext(context);
   }, [column, labelCol, fieldCol, displayType, labelWidth, maxWidth, readOnly]);
 
   const initial = async () => {
-    onMount && await onMount();
+    onMount && (await onMount());
     const values = form.getValues();
     immediateWatch(watch, values);
     onMountLogger();
@@ -81,9 +82,9 @@ const FormCore = (props: any) => {
 
   const onMountLogger = () => {
     const start = new Date().getTime();
-    if (isFunction(logOnMount)|| isFunction(logOnSubmit)) {
-      setSessionItem('FORM_MOUNT_TIME', start);
-      setSessionItem('FORM_START', start);
+    if (isFunction(logOnMount) || isFunction(logOnSubmit)) {
+      setSessionItem("FORM_MOUNT_TIME", start);
+      setSessionItem("FORM_START", start);
     }
     if (isFunction(logOnMount)) {
       const logParams: any = {
@@ -99,8 +100,8 @@ const FormCore = (props: any) => {
     }
     // 如果是要计算时间，在 onMount 时存一个时间戳
     if (isFunction(logOnSubmit)) {
-      setSessionItem('NUMBER_OF_SUBMITS', 0);
-      setSessionItem('FAILED_ATTEMPTS', 0);
+      setSessionItem("NUMBER_OF_SUBMITS", 0);
+      setSessionItem("FAILED_ATTEMPTS", 0);
     }
   };
 
@@ -108,14 +109,14 @@ const FormCore = (props: any) => {
     if (!isFunction(logOnSubmit)) {
       return;
     }
-   
-    const start = getSessionItem('FORM_START');
-    const mount = getSessionItem('FORM_MOUNT_TIME');
 
-    const numberOfSubmits = getSessionItem('NUMBER_OF_SUBMITS') + 1;
+    const start = getSessionItem("FORM_START");
+    const mount = getSessionItem("FORM_MOUNT_TIME");
+
+    const numberOfSubmits = getSessionItem("NUMBER_OF_SUBMITS") + 1;
     const end = new Date().getTime();
 
-    let failedAttempts = getSessionItem('FAILED_ATTEMPTS');
+    let failedAttempts = getSessionItem("FAILED_ATTEMPTS");
     if (params.errorFields.length > 0) {
       failedAttempts = failedAttempts + 1;
     }
@@ -134,9 +135,9 @@ const FormCore = (props: any) => {
       logParams.id = id;
     }
     logOnSubmit(logParams);
-    setSessionItem('FORM_START', end);
-    setSessionItem('NUMBER_OF_SUBMITS', numberOfSubmits);
-    setSessionItem('FAILED_ATTEMPTS', failedAttempts);
+    setSessionItem("FORM_START", end);
+    setSessionItem("NUMBER_OF_SUBMITS", numberOfSubmits);
+    setSessionItem("FAILED_ATTEMPTS", failedAttempts);
   };
 
   const handleValuesChange = (changedValues: any, _allValues: any) => {
@@ -182,8 +183,8 @@ const FormCore = (props: any) => {
     onFinishFailed({ ...params, values });
   };
 
-  const formClassName = cx('frm-form', className, {
-    ['frm-form-card']: isCardMode,
+  const formClassName = cx("frm-form", className, {
+    ["frm-form-card"]: isCardMode,
   });
 
   return (
@@ -200,6 +201,6 @@ const FormCore = (props: any) => {
       </Grid>
     </Form>
   );
-}
+};
 
 export default FormCore;

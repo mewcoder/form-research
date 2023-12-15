@@ -26,46 +26,48 @@ const schema0 = {
 const schema = {
   type: "object",
   displayType: "column", // row / column
-  column: 3,
+  column: 1,
   properties: {
     input1: {
-      title: "输入框 A",
-      type: "string",
-    },
-    input2: {
-      title: "输入框 A",
+      title: "输入框",
       type: "string",
     },
     obj: {
       type: "object",
       widget: "card", // collapse / card / lineTitle / subInline
+      displayType: "column",
       title: "对象",
-      column: 4,
+      column: 3,
       properties: {
         input1: {
           title: "输入框 A",
           type: "string",
         },
-        input2: {
-          title: "输入框 B",
-          type: "string",
-        },
-        input3: {
-          title: "输入框 C",
-          type: "string",
+        obj: {
+          type: "object",
+          widget: "subInline", // collapse / card / lineTitle / subInline
+          displayType: "column",
+          title: "对象111",
+          column: 2,
+          properties: {
+            input1: {
+              title: "输入框 A",
+              type: "string",
+            },
+          },
         },
       },
     },
     list: {
-      title: "活动模版",
+      title: "数组",
       type: "array",
-      widget: "simpleList",
-      display: "inline",
+      widget: "TableList", // simpleList / cardList / TableList
       props: {
         hasBackground: true,
       },
       items: {
         type: "object",
+        column: 3,
         properties: {
           input1: {
             title: "输入框 A",
@@ -75,8 +77,40 @@ const schema = {
             title: "输入框 B",
             type: "string",
           },
-          input3: {
-            title: "输入框 C",
+          list: {
+            title: "数组",
+            type: "array",
+            widget: "simpleList", // simpleList / cardList / TableList
+            props: {
+              hasBackground: true,
+            },
+            items: {
+              type: "object",
+              column: 3,
+              properties: {
+                input1: {
+                  title: "输入框 A",
+                  type: "string",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    list2: {
+      title: "数组",
+      type: "array",
+      widget: "simpleList", // simpleList / cardList / TableList
+      props: {
+        hasBackground: true,
+      },
+      items: {
+        type: "object",
+        column: 3,
+        properties: {
+          input1: {
+            title: "输入框 A",
             type: "string",
           },
         },
@@ -89,7 +123,7 @@ const Demo = () => {
   const form = useForm();
   return (
     <div className="demo">
-      <FormRender form={form} schema={schema0} />
+      <FormRender form={form} schema={schema} />
       <Button type="primary" onClick={form.submit}>
         提交
       </Button>

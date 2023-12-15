@@ -1,16 +1,16 @@
-import React, { useEffect, useContext, FC } from 'react';
-import { Form, Row, Col, Button, Space, ConfigProvider } from 'antd';
-import classNames from 'classnames';
-import { cloneDeep } from 'lodash-es';
-import { useStore } from 'zustand';
+import React, { useEffect, useContext, FC } from "react";
+import { Form, Row, Col, Button, Space, ConfigProvider } from "antd";
+import classNames from "classnames";
+import { cloneDeep } from "lodash-es";
+import { useStore } from "zustand";
 
-import { FRContext } from '../models/context';
-import transformProps from '../models/transformProps';
-import { parseValuesToBind } from '../models/bindValues';
-import filterValuesHidden from '../models/filterValuesHidden';
-import filterValuesUndefined from '../models/filterValuesUndefined';
-import { getFormItemLayout } from '../models/layout';
-import { translation, isFunction } from '../utils';
+import { FRContext } from "../models/context";
+import transformProps from "../models/transformProps";
+import { parseValuesToBind } from "../models/bindValues";
+import filterValuesHidden from "../models/filterValuesHidden";
+import filterValuesUndefined from "../models/filterValuesUndefined";
+import { getFormItemLayout } from "../models/layout";
+import { translation, isFunction } from "../utils";
 
 import {
   valuesWatch,
@@ -18,14 +18,14 @@ import {
   yymmdd,
   msToTime,
   getSessionItem,
-  setSessionItem
-} from '../models/formCoreUtils';
+  setSessionItem,
+} from "../models/formCoreUtils";
 
-import { FRProps } from '../type';
-import RenderCore from '../render-core';
-import './index.less';
+import { FRProps } from "../type";
+import RenderCore from "../render-core";
+import "./index.less";
 
-const FormCore:FC<FRProps> = (props) => {
+const FormCore: FC<FRProps> = (props) => {
   const store: any = useContext(FRContext);
   const schema = useStore(store, (state: any) => state.schema);
   const flattenSchema = useStore(store, (state: any) => state.flattenSchema);
@@ -35,6 +35,7 @@ const FormCore:FC<FRProps> = (props) => {
   const t = translation(configCtx);
 
   const { type, properties, ...schemProps } = schema || {};
+
   const {
     formProps,
     displayType,
@@ -84,13 +85,23 @@ const FormCore:FC<FRProps> = (props) => {
       labelCol,
       fieldCol,
       maxWidth,
-      validateTrigger
+      validateTrigger,
     };
     setContext(context);
-  }, [column, labelCol, fieldCol, displayType, labelWidth, maxWidth, readOnly, disabled, validateTrigger]);
+  }, [
+    column,
+    labelCol,
+    fieldCol,
+    displayType,
+    labelWidth,
+    maxWidth,
+    readOnly,
+    disabled,
+    validateTrigger,
+  ]);
 
   const initial = async () => {
-    onMount && await onMount();
+    onMount && (await onMount());
     onMountLogger();
     setTimeout(() => {
       const values = form.getValues();
@@ -100,9 +111,9 @@ const FormCore:FC<FRProps> = (props) => {
 
   const onMountLogger = () => {
     const start = new Date().getTime();
-    if (isFunction(logOnMount)|| isFunction(logOnSubmit)) {
-      setSessionItem('FORM_MOUNT_TIME', start);
-      setSessionItem('FORM_START', start);
+    if (isFunction(logOnMount) || isFunction(logOnSubmit)) {
+      setSessionItem("FORM_MOUNT_TIME", start);
+      setSessionItem("FORM_START", start);
     }
     if (isFunction(logOnMount)) {
       const logParams: any = {
@@ -118,8 +129,8 @@ const FormCore:FC<FRProps> = (props) => {
     }
     // 如果是要计算时间，在 onMount 时存一个时间戳
     if (isFunction(logOnSubmit)) {
-      setSessionItem('NUMBER_OF_SUBMITS', 0);
-      setSessionItem('FAILED_ATTEMPTS', 0);
+      setSessionItem("NUMBER_OF_SUBMITS", 0);
+      setSessionItem("FAILED_ATTEMPTS", 0);
     }
   };
 
@@ -127,14 +138,14 @@ const FormCore:FC<FRProps> = (props) => {
     if (!isFunction(logOnSubmit)) {
       return;
     }
-   
-    const start = getSessionItem('FORM_START');
-    const mount = getSessionItem('FORM_MOUNT_TIME');
 
-    const numberOfSubmits = getSessionItem('NUMBER_OF_SUBMITS') + 1;
+    const start = getSessionItem("FORM_START");
+    const mount = getSessionItem("FORM_MOUNT_TIME");
+
+    const numberOfSubmits = getSessionItem("NUMBER_OF_SUBMITS") + 1;
     const end = new Date().getTime();
 
-    let failedAttempts = getSessionItem('FAILED_ATTEMPTS');
+    let failedAttempts = getSessionItem("FAILED_ATTEMPTS");
     if (params.errorFields.length > 0) {
       failedAttempts = failedAttempts + 1;
     }
@@ -153,9 +164,9 @@ const FormCore:FC<FRProps> = (props) => {
       logParams.id = id;
     }
     logOnSubmit(logParams);
-    setSessionItem('FORM_START', end);
-    setSessionItem('NUMBER_OF_SUBMITS', numberOfSubmits);
-    setSessionItem('FAILED_ATTEMPTS', failedAttempts);
+    setSessionItem("FORM_START", end);
+    setSessionItem("NUMBER_OF_SUBMITS", numberOfSubmits);
+    setSessionItem("FAILED_ATTEMPTS", failedAttempts);
   };
 
   const handleValuesChange = (changedValues: any, _allValues: any) => {
@@ -165,7 +176,9 @@ const FormCore:FC<FRProps> = (props) => {
 
   const transFormValues = (_values: any) => {
     let values = cloneDeep(_values);
-    values = removeHiddenData ? filterValuesHidden(values, flattenSchema) : cloneDeep(form.getFieldsValue(true));
+    values = removeHiddenData
+      ? filterValuesHidden(values, flattenSchema)
+      : cloneDeep(form.getFieldsValue(true));
     values = parseValuesToBind(values, flattenSchema);
     values = filterValuesUndefined(values);
     return values;
@@ -173,7 +186,9 @@ const FormCore:FC<FRProps> = (props) => {
 
   const handleFinish = async (_values: any) => {
     const values = transFormValues(_values);
-    const fieldsError = beforeFinish ? await beforeFinish({ data: values, schema, errors: [] }) : null;
+    const fieldsError = beforeFinish
+      ? await beforeFinish({ data: values, schema, errors: [] })
+      : null;
     // console.log(values, form.getValues(true), _values);
     if (fieldsError?.length > 0) {
       form.setFields(fieldsError);
@@ -195,7 +210,7 @@ const FormCore:FC<FRProps> = (props) => {
   const operlabelCol = getFormItemLayout(column, {}, { labelWidth })?.labelCol;
   return (
     <Form
-      className={classNames('fr-form', { [className]: !!className } )}
+      className={classNames("fr-form", { [className]: !!className })}
       labelWrap={true}
       {...formProps}
       disabled={disabled}
@@ -204,37 +219,37 @@ const FormCore:FC<FRProps> = (props) => {
       onFinishFailed={handleFinishFailed}
       onValuesChange={handleValuesChange}
     >
-      <Row gutter={displayType === 'row' ? 16 : 24}>
+      <Row gutter={displayType === "row" ? 16 : 24}>
         <RenderCore schema={schema} />
         {operateExtra}
       </Row>
       {schema && !!footer && (
-        <Row gutter={displayType === 'row' ? 16 : 24}>
+        <Row gutter={displayType === "row" ? 16 : 24}>
           <Col span={24 / column}>
             <Form.Item
-              label={ displayType !== 'column' ?  'hideLabel' : null}
+              label={displayType !== "column" ? "hideLabel" : null}
               labelCol={operlabelCol}
-              className='fr-hide-label'
+              className="fr-hide-label"
             >
-              {isFunction(footer) ? ( 
+              {isFunction(footer) ? (
                 <Space>{footer()}</Space>
-              ): (
+              ) : (
                 <Space>
                   {!footer?.reset?.hide && (
-                    <Button 
-                      {...footer?.reset} 
+                    <Button
+                      {...footer?.reset}
                       onClick={() => form.resetFields()}
                     >
-                      {footer?.reset?.text || t('reset')}
+                      {footer?.reset?.text || t("reset")}
                     </Button>
                   )}
                   {!footer?.submit?.hide && (
                     <Button
-                      type='primary'
+                      type="primary"
                       onClick={form.submit}
                       {...footer?.submit}
                     >
-                      {footer?.submit?.text || t('submit')}
+                      {footer?.submit?.text || t("submit")}
                     </Button>
                   )}
                 </Space>
@@ -245,6 +260,6 @@ const FormCore:FC<FRProps> = (props) => {
       )}
     </Form>
   );
-}
+};
 
 export default FormCore;
